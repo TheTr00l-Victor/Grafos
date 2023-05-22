@@ -1,0 +1,103 @@
+import java.util.ArrayList;
+
+public class Main {
+
+    public static void main(String[] args) {
+
+        int[][] grafo = {
+                {0,5,7,1,0,0,0},
+                {5,0,2,3,0,0,0},
+                {7,2,0,6,5,1,0},
+                {1,3,6,0,0,5,3},
+                {0,0,5,0,0,4,1},
+                {0,0,1,5,4,0,0},
+                {0,0,0,3,1,0,0}
+        };
+
+        int[][] grafoDjabo = {
+                {0,0,0,0,5,1,0,0,0,0,0,2,0,0},
+                {0,0,11,0,1,0,0,0,9,0,0,0,0,0},
+                {0,11,0,3,0,3,5,0,0,6,0,0,0,0},
+                {0,0,3,0,0,0,4,0,0,0,0,0,0,5},
+                {5,1,0,0,0,0,0,8,0,0,0,0,0,0},
+                {1,0,3,0,0,0,1,0,6,0,0,0,4,0},
+                {0,0,5,4,0,1,0,0,0,0,0,0,0,0},
+                {0,0,0,0,8,0,0,0,10,0,0,0,7,0},
+                {0,9,0,0,0,6,0,10,0,0,0,0,0,0},
+                {0,0,6,0,0,0,0,0,0,0,13,8,0,0},
+                {0,0,0,0,0,0,0,0,0,13,0,0,9,6},
+                {2,0,0,0,0,0,0,0,0,8,0,0,0,0},
+                {0,0,0,0,0,4,0,7,0,0,9,0,0,0},
+                {0,0,0,5,0,0,0,0,0,0,6,0,0,0}
+        };
+        int origem = 0;
+        algoritmoDijsktra(grafo, origem);
+
+    }
+
+    static void algoritmoDijsktra(int[][] grafo, int origem) {
+        int numNodes = grafo.length;
+        int[] D = new int[numNodes];
+        boolean[] N = new boolean[numNodes];
+        ArrayList<Object>[] path = new ArrayList[numNodes];
+        N[origem] = true;
+        for (int v = 0; v < numNodes; v++) {
+            path[v] = new ArrayList<Object>();
+            path[v].add(origem);
+            if (grafo[v][origem] != 0) {
+                D[v] = grafo[v][origem];
+            } else {
+                D[v] = 999999999;
+            }
+        }
+        do {
+            int menor = 999999999;
+            int w = -1;
+            for (int i = 0; i < D.length; i++) {
+                if (!N[i] && D[i] < menor) {
+                    menor = D[i];
+                    w = i;
+                }
+            }
+            N[w] = true;
+            for (int v = 0; v < numNodes; v++) {
+                if (grafo[v][w] != 0 && !N[v]) {
+                    if (D[v] > D[w] + grafo[w][v]) {
+                        path[v] = caminhoPai(w, path);
+                        D[v] = D[w] + grafo[w][v];
+                    }
+                }
+            }
+        } while (!tudoTrue(N));
+        imprimirValores(path, D);
+    }
+    private static boolean tudoTrue(boolean[] array)
+    {
+        for (int i=0; i<= array.length-1; i++) {
+            if (!array[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static ArrayList<Object> caminhoPai(int pai, ArrayList<Object>[] path) {
+        ArrayList<Object>[] copiaPath = new ArrayList[path.length];
+        for (int i = 0; i < path.length; i++) {
+            copiaPath[i] = new ArrayList<>(path[i]);
+        }
+        copiaPath[pai].add(pai);
+        return new ArrayList<>(copiaPath[pai]);
+    }
+
+    private static void imprimirValores(ArrayList<Object>[] path, int[] D) {
+
+        for (int i = 0; i <= D.length-1; i++) {
+            System.out.println("Nó " + i + ": " + path[i].toString() + " -> " + D[i]);
+        }
+
+    }
+
+
+
+}
